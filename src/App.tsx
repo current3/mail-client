@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Panel, PanelHeader, Group, Spinner, Div, Placeholder, Search } from '@vkontakte/vkui';
 import { useLetters } from '@/hooks/useLetters';
 import LetterRow from '@/components/LetterRow';
-import LetterViewPage from '@/pages/LetterViewPage';
+
+const LetterViewPage = lazy(() => import('@/pages/LetterViewPage'));
 
 function App() {
   const { letters, isLoading, error } = useLetters();
@@ -26,9 +27,12 @@ function App() {
 
   const openLetter = letters.find((letter) => letter.id === openLetterId);
 
-  // Все хуки уже вызваны выше — теперь ранний return безопасен.
   if (openLetter) {
-    return <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />;
+    return (
+      <Suspense fallback={<Div><Spinner size="m" /></Div>}>
+        <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />
+      </Suspense>
+    );
   }
 
   return (

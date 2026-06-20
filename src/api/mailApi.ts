@@ -1,4 +1,4 @@
-import type { Letter, FolderId } from '@/types';
+import type { Letter } from '@/types';
 
 const BASE_URL = 'https://jsonplaceholder.typicode.com';
 
