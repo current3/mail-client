@@ -1,11 +1,20 @@
-import { Panel, PanelHeader, Group, Div } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Group, Cell, Avatar } from '@vkontakte/vkui';
+import { LETTERS } from '@/api/mockData';
 
 function App() {
   return (
     <Panel>
       <PanelHeader>Почта</PanelHeader>
       <Group>
-        <Div>Здесь скоро появится список писем</Div>
+        {LETTERS.map((letter) => (
+          <Cell
+            key={letter.id}
+            before={<Avatar size={40} initials={letter.from[0]} />}
+            subtitle={letter.preview}
+          >
+            {letter.subject}
+          </Cell>
+        ))}
       </Group>
     </Panel>
   );
