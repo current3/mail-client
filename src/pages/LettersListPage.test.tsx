@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ConfigProvider, AdaptivityProvider, AppRoot } from '@vkontakte/vkui';
 import LettersListPage from './LettersListPage';
 import * as mailApi from '@/api/mailApi';
@@ -22,11 +22,13 @@ const MOCK_LETTERS: Letter[] = [
 
 function renderPage() {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={['/folder/inbox']}>
       <ConfigProvider>
         <AdaptivityProvider>
           <AppRoot>
-            <LettersListPage />
+            <Routes>
+              <Route path="/folder/:folderId" element={<LettersListPage />} />
+            </Routes>
           </AppRoot>
         </AdaptivityProvider>
       </ConfigProvider>
@@ -36,7 +38,7 @@ function renderPage() {
 
 describe('LettersListPage', () => {
   beforeEach(() => {
-    vi.spyOn(mailApi, 'fetchLetters').mockResolvedValue(MOCK_LETTERS);
+    vi.spyOn(mailApi, 'fetchLettersByFolder').mockResolvedValue(MOCK_LETTERS);
   });
 
   it('загружает и показывает список писем', async () => {

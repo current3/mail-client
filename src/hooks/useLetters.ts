@@ -2,26 +2,40 @@ import { useState, useEffect } from 'react';
 import { fetchLettersByFolder } from '@/api/mailApi';
 import type { Letter, FolderId } from '@/types';
 
+type State = {
+  letters: Letter[];
+  isLoading: boolean;
+  error: string | null;
+};
+
 export function useLetters(folderId: FolderId) {
-  const [letters, setLetters] = useState<Letter[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<State>({
+    letters: [],
+    isLoading: true,
+    error: null,
+  });
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
+    let active = true;
 
     fetchLettersByFolder(folderId)
       .then((data) => {
-        setLetters(data);
+        if (active) setState({ letters: data, isLoading: false, error: null });
       })
       .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
-      })
-      .finally(() => {
-        setIsLoading(false);
+        if (active) {
+          setState({
+            letters: [],
+            isLoading: false,
+            error: err instanceof Error ? err.message : 'Неизвестная ошибка',
+          });
+        }
       });
+
+    return () => {
+      active = false;
+    };
   }, [folderId]);
 
-  return { letters, isLoading, error };
+  return state;
 }

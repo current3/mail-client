@@ -1,17 +1,15 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Panel, PanelHeader, PanelHeaderBack, Group, Header, Div, SimpleCell, Spinner, Placeholder } from '@vkontakte/vkui';
-import { useLetters } from '@/hooks/useLetters';
+import { useLetter } from '@/hooks/useLetter';
 
 function LetterViewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { letters, isLoading } = useLetters();
-
-  const letter = letters.find((l) => l.id === id);
+  const { letter, isLoading } = useLetter(id);
 
   return (
     <Panel>
-      <PanelHeader before={<PanelHeaderBack onClick={() => navigate('/')} />}>
+      <PanelHeader before={<PanelHeaderBack onClick={() => navigate(-1)} />}>
         Письмо
       </PanelHeader>
       {isLoading && <Div><Spinner size="m" /></Div>}

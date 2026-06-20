@@ -13,6 +13,8 @@ function mapPostToLetter(post: ServerPost): Letter {
   const folders: FolderId[] = ['inbox', 'sent', 'spam', 'trash'];
   const folderId = folders[post.id % folders.length];
 
+  const date = new Date(Date.now() - post.id * 3600 * 1000).toISOString();
+
   return {
     id: String(post.id),
     folderId,
@@ -21,7 +23,7 @@ function mapPostToLetter(post: ServerPost): Letter {
     subject: post.title,
     preview: post.body.slice(0, 60) + '...',
     body: post.body,
-    date: '2026-06-18T09:30:00Z',
+    date,
     isRead: false,
     isStarred: false,
   };
@@ -41,4 +43,9 @@ export async function fetchLetters(): Promise<Letter[]> {
 export async function fetchLettersByFolder(folderId: FolderId): Promise<Letter[]> {
   const all = await fetchLetters();
   return all.filter((letter) => letter.folderId === folderId);
+}
+
+export async function fetchLetterById(id: string): Promise<Letter | null> {
+  const all = await fetchLetters();
+  return all.find((letter) => letter.id === id) ?? null;
 }
