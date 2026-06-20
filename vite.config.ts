@@ -8,6 +8,19 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },
   },
+  build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('@vkontakte')) return 'vkui-vendor';
+              if (id.includes('react')) return 'react-vendor';
+              return 'vendor';
+            }
+          },
+        },
+      },
+    },
   test: {
     globals: true,
     environment: 'jsdom',
