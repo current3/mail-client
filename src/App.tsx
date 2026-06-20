@@ -1,5 +1,6 @@
-import { Panel, PanelHeader, Group, Cell, Avatar } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Group } from '@vkontakte/vkui';
 import { LETTERS } from '@/api/mockData';
+import LetterRow from '@/components/LetterRow';
 
 function App() {
   return (
@@ -7,13 +8,7 @@ function App() {
       <PanelHeader>Почта</PanelHeader>
       <Group>
         {LETTERS.map((letter) => (
-          <Cell
-            key={letter.id}
-            before={<Avatar size={40} initials={letter.from[0]} />}
-            subtitle={letter.preview}
-          >
-            {letter.subject}
-          </Cell>
+          <LetterRow key={letter.id} letter={letter} />
         ))}
       </Group>
     </Panel>
