@@ -1,13 +1,23 @@
-import { useState } from 'react';
-import { Panel, PanelHeader, Group } from '@vkontakte/vkui';
-import { LETTERS } from '@/api/mockData';
+import { useState, useEffect } from 'react';
+import { Panel, PanelHeader, Group, Spinner, Div } from '@vkontakte/vkui';
+import { fetchLetters } from '@/api/mailApi';
+import type { Letter } from '@/types';
 import LetterRow from '@/components/LetterRow';
 import LetterViewPage from '@/pages/LetterViewPage';
 
 function App() {
+  const [letters, setLetters] = useState<Letter[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [openLetterId, setOpenLetterId] = useState<string | null>(null);
 
-  const openLetter = LETTERS.find((letter) => letter.id === openLetterId);
+  useEffect(() => {
+    fetchLetters().then((data) => {
+      setLetters(data);
+      setIsLoading(false);
+    });
+  }, []);
+
+  const openLetter = letters.find((letter) => letter.id === openLetterId);
 
   if (openLetter) {
     return <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />;
@@ -16,15 +26,19 @@ function App() {
   return (
     <Panel>
       <PanelHeader>Почта</PanelHeader>
-      <Group>
-        {LETTERS.map((letter) => (
-          <LetterRow
-            key={letter.id}
-            letter={letter}
-            onClick={() => setOpenLetterId(letter.id)}
-          />
-        ))}
-      </Group>
+      {isLoading ? (
+        <Div><Spinner size="m" /></Div>
+      ) : (
+        <Group>
+          {letters.map((letter) => (
+            <LetterRow
+              key={letter.id}
+              letter={letter}
+              onClick={() => setOpenLetterId(letter.id)}
+            />
+          ))}
+        </Group>
+      )}
     </Panel>
   );
 }
