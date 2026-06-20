@@ -9,10 +9,24 @@ interface LetterRowProps {
   onClick: (id: string) => void;
 }
 
+function gradientFromString(str: string): 1 | 2 | 3 | 4 | 5 | 6 {
+  let sum = 0;
+  for (let i = 0; i < str.length; i++) {
+    sum += str.charCodeAt(i);
+  }
+  return ((sum % 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+}
+
 function LetterRow({ letter, onClick }: LetterRowProps) {
   return (
     <Cell
-      before={<Avatar size={40} initials={letter.from[0]} />}
+      before={
+        <Avatar
+            size={40}
+            initials={letter.from[0]}
+            gradientColor={gradientFromString(letter.from)}
+        />
+        }
       subtitle={letter.preview}
       indicator={formatLetterDate(letter.date)}
       after={letter.isStarred ? <Icon16Favorite /> : undefined}
