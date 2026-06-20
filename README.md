@@ -1,73 +1,44 @@
-# React + TypeScript + Vite
+# Mail Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Мини-клиент почты на React 18 + TypeScript + VKUI. Пет-проект, демонстрирующий работу с дизайн-системой, REST API, оптимизацией и тестами.
 
-Currently, two official plugins are available:
+[Репозиторий](https://github.com/current3/mail-client)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Стек
 
-## React Compiler
+- **React 18** — хуки, состояние, эффекты, ленивая загрузка
+- **TypeScript** — строгая типизация, union-типы, типизация пропсов
+- **VKUI** — дизайн-система VK
+- **Vite** — сборка, разделение чанков
+- **Vitest + React Testing Library** — юнит- и компонентные тесты
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Возможности
 
-## Expanding the ESLint configuration
+- Список писем с загрузкой через REST API
+- Просмотр письма (ленивая загрузка экрана)
+- Живой поиск по письмам
+- Обработка состояний загрузки и ошибок
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Запуск
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install      # установка зависимостей
+npm run dev      # запуск дев-сервера
+npm test         # тесты
+npm run build    # продакшен-сборка
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Технические решения
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **API-слой** изолирован: компоненты не знают об источнике данных, формат сервера преобразуется в доменную модель (anti-corruption layer).
+- **Загрузка данных** вынесена в кастомный хук `useLetters` (loading / error / success).
+- **Оптимизация рендеринга**: `memo` + `useCallback` на строках списка, проверено через React Profiler.
+- **Оптимизация бандла**: code-splitting через `React.lazy`, вендорные чанки (React, VKUI) вынесены для долгосрочного кеширования.
+- **Тесты**: юнит на утилиты, компонентные тесты с мокированием API.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Возможные доработки
+
+- Роутинг (react-router)
+- Виртуализация длинного списка
+- Тёмная/светлая тема
+- e2e-тесты
