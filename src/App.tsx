@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Panel, PanelHeader, Group, Spinner, Div, Placeholder, Search } from '@vkontakte/vkui';
 import { useLetters } from '@/hooks/useLetters';
 import LetterRow from '@/components/LetterRow';
@@ -15,15 +15,20 @@ function App() {
     return <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />;
   }
 
-  const visibleLetters = letters.filter((letter) => {
+  const visibleLetters = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return true;
-    return (
-      letter.subject.toLowerCase().includes(q) ||
-      letter.from.toLowerCase().includes(q) ||
-      letter.preview.toLowerCase().includes(q)
+    if (!q) return letters;
+    return letters.filter(
+      (letter) =>
+        letter.subject.toLowerCase().includes(q) ||
+        letter.from.toLowerCase().includes(q) ||
+        letter.preview.toLowerCase().includes(q),
     );
-  });
+  }, [letters, query]);
+
+  const handleOpenLetter = useCallback((id: string) => {
+    setOpenLetterId(id);
+  }, []);
 
   return (
     <Panel>
@@ -40,7 +45,7 @@ function App() {
               <LetterRow
                 key={letter.id}
                 letter={letter}
-                onClick={() => setOpenLetterId(letter.id)}
+                onClick={handleOpenLetter}
               />
             ))
           )}

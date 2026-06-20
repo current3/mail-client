@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import { Cell, Avatar } from '@vkontakte/vkui';
 import type { Letter } from '@/types';
 import { formatLetterDate } from '@/utils/formatDate';
 
 interface LetterRowProps {
   letter: Letter;
-  onClick: () => void;
+  onClick: (id: string) => void;
 }
 
 function LetterRow({ letter, onClick }: LetterRowProps) {
@@ -13,11 +14,11 @@ function LetterRow({ letter, onClick }: LetterRowProps) {
       before={<Avatar size={40} initials={letter.from[0]} />}
       subtitle={letter.preview}
       indicator={formatLetterDate(letter.date)}
-      onClick={onClick}
+      onClick={() => onClick(letter.id)}
     >
       {letter.subject}
     </Cell>
   );
 }
 
-export default LetterRow;
+export default memo(LetterRow);
