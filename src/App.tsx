@@ -1,21 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Panel, PanelHeader, Group, Spinner, Div } from '@vkontakte/vkui';
-import { fetchLetters } from '@/api/mailApi';
-import type { Letter } from '@/types';
+import { useState } from 'react';
+import { Panel, PanelHeader, Group, Spinner, Div, Placeholder } from '@vkontakte/vkui';
+import { useLetters } from '@/hooks/useLetters';
 import LetterRow from '@/components/LetterRow';
 import LetterViewPage from '@/pages/LetterViewPage';
 
 function App() {
-  const [letters, setLetters] = useState<Letter[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { letters, isLoading, error } = useLetters();
   const [openLetterId, setOpenLetterId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchLetters().then((data) => {
-      setLetters(data);
-      setIsLoading(false);
-    });
-  }, []);
 
   const openLetter = letters.find((letter) => letter.id === openLetterId);
 
@@ -26,9 +17,9 @@ function App() {
   return (
     <Panel>
       <PanelHeader>Почта</PanelHeader>
-      {isLoading ? (
-        <Div><Spinner size="m" /></Div>
-      ) : (
+      {isLoading && <Div><Spinner size="m" /></Div>}
+      {error && <Placeholder>{error}</Placeholder>}
+      {!isLoading && !error && (
         <Group>
           {letters.map((letter) => (
             <LetterRow
