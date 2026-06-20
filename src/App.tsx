@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Panel, PanelHeader, Group, Spinner, Div, Placeholder } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Group, Spinner, Div, Placeholder, Search } from '@vkontakte/vkui';
 import { useLetters } from '@/hooks/useLetters';
 import LetterRow from '@/components/LetterRow';
 import LetterViewPage from '@/pages/LetterViewPage';
@@ -7,6 +7,7 @@ import LetterViewPage from '@/pages/LetterViewPage';
 function App() {
   const { letters, isLoading, error } = useLetters();
   const [openLetterId, setOpenLetterId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
 
   const openLetter = letters.find((letter) => letter.id === openLetterId);
 
@@ -14,20 +15,35 @@ function App() {
     return <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />;
   }
 
+  const visibleLetters = letters.filter((letter) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      letter.subject.toLowerCase().includes(q) ||
+      letter.from.toLowerCase().includes(q) ||
+      letter.preview.toLowerCase().includes(q)
+    );
+  });
+
   return (
     <Panel>
       <PanelHeader>Почта</PanelHeader>
+      <Search value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Поиск писем" />
       {isLoading && <Div><Spinner size="m" /></Div>}
       {error && <Placeholder>{error}</Placeholder>}
       {!isLoading && !error && (
         <Group>
-          {letters.map((letter) => (
-            <LetterRow
-              key={letter.id}
-              letter={letter}
-              onClick={() => setOpenLetterId(letter.id)}
-            />
-          ))}
+          {visibleLetters.length === 0 ? (
+            <Placeholder>Ничего не найдено</Placeholder>
+          ) : (
+            visibleLetters.map((letter) => (
+              <LetterRow
+                key={letter.id}
+                letter={letter}
+                onClick={() => setOpenLetterId(letter.id)}
+              />
+            ))
+          )}
         </Group>
       )}
     </Panel>
