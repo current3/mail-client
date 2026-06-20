@@ -1,12 +1,16 @@
 import { useState, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Panel, PanelHeader, Group, Spinner, Div, Placeholder, Search } from '@vkontakte/vkui';
 import { useLetters } from '@/hooks/useLetters';
 import LetterRow from '@/components/LetterRow';
+import type { FolderId } from '@/types';
 
 function LettersListPage() {
   const navigate = useNavigate();
-  const { letters, isLoading, error } = useLetters();
+  const { folderId } = useParams<{ folderId: string }>();
+  const currentFolder = (folderId ?? 'inbox') as FolderId;
+
+  const { letters, isLoading, error } = useLetters(currentFolder);
   const [query, setQuery] = useState('');
 
   const visibleLetters = useMemo(() => {

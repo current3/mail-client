@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { fetchLetters } from '@/api/mailApi';
-import type { Letter } from '@/types';
+import { fetchLettersByFolder } from '@/api/mailApi';
+import type { Letter, FolderId } from '@/types';
 
-export function useLetters() {
+export function useLetters(folderId: FolderId) {
   const [letters, setLetters] = useState<Letter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +11,7 @@ export function useLetters() {
     setIsLoading(true);
     setError(null);
 
-    fetchLetters()
+    fetchLettersByFolder(folderId)
       .then((data) => {
         setLetters(data);
       })
@@ -21,7 +21,7 @@ export function useLetters() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [folderId]);
 
   return { letters, isLoading, error };
 }
