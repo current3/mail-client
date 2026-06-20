@@ -9,12 +9,6 @@ function App() {
   const [openLetterId, setOpenLetterId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
-  const openLetter = letters.find((letter) => letter.id === openLetterId);
-
-  if (openLetter) {
-    return <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />;
-  }
-
   const visibleLetters = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return letters;
@@ -30,6 +24,13 @@ function App() {
     setOpenLetterId(id);
   }, []);
 
+  const openLetter = letters.find((letter) => letter.id === openLetterId);
+
+  // Все хуки уже вызваны выше — теперь ранний return безопасен.
+  if (openLetter) {
+    return <LetterViewPage letter={openLetter} onBack={() => setOpenLetterId(null)} />;
+  }
+
   return (
     <Panel>
       <PanelHeader>Почта</PanelHeader>
@@ -42,11 +43,7 @@ function App() {
             <Placeholder>Ничего не найдено</Placeholder>
           ) : (
             visibleLetters.map((letter) => (
-              <LetterRow
-                key={letter.id}
-                letter={letter}
-                onClick={handleOpenLetter}
-              />
+              <LetterRow key={letter.id} letter={letter} onClick={handleOpenLetter} />
             ))
           )}
         </Group>
